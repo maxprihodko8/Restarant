@@ -1,20 +1,16 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
-<%--
-  Created by IntelliJ IDEA.
-  User: fancy
-  Date: 07.11.16
-  Time: 13:46
-  To change this template use File | Settings | File Templates.
---%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
+<html ng-app>
 <head>
     <title>Restarant</title>
 </head>
 
-<body style="background-color: #c7b39b; min-width: 100%; min-height: 100%; position: fixed; z-index: -1; top:0; left: 0;
-background: url(http://www.theredherring.co.za/wp-content/uploads/2013/03/background-1024x808.jpg) ;">
+<link rel="stylesheet" type="text/css" href="/resources/css/someStyles.css"/>
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
+
+<body>
 <div>
     <div>
         <table>
@@ -62,6 +58,7 @@ background: url(http://www.theredherring.co.za/wp-content/uploads/2013/03/backgr
         <p>&nbsp;</p>
     </div>
 </div>
+
 </body>
 
 </html>

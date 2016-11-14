@@ -3,17 +3,13 @@ package com.restarant.controller.security;
 import com.restarant.model.repository.UserRepository;
 import com.restarant.model.user.UserImpl;
 import com.restarant.model.user.UserRolesEnum;
-import com.restarant.model.sql.UserDAOImpl;
+import com.restarant.model.sql.userSql.UserDAOImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.Set;

@@ -20,28 +20,39 @@
         <constructor-arg type="javax.sql.DataSource" ref="dataSource"/>
     </bean>
 
-    <bean id="userDAO" class="com.restarant.model.sql.UserDAOImpl" init-method="init">
+    <bean id="userDAO" class="com.restarant.model.sql.userSql.UserDAOImpl" init-method="init">
         <constructor-arg name="jdbcTemplate" ref="jdbcTemplate"/>
     </bean>
 
-    <bean name="repository" class="com.restarant.model.repository.UserRepository" />
+    <bean id="dishDAO" class="com.restarant.model.sql.dishSql.DishDAOImpl" init-method="init">
+        <constructor-arg name="jdbcTemplate" ref="jdbcTemplate"/>
+    </bean>
 
-    <bean id="CUserDetailsService" class="com.restarant.controller.security.CustomUserDetailsService">
-        <constructor-arg name="userRepository" ref="repository"/>
-        <constructor-arg name="userDAO" ref="userDAO"/>
+    <bean id="dishService" class="com.restarant.controller.service.DishService" init-method="init">
+        <constructor-arg name="dishDAO" ref="dishDAO"/>
+        <constructor-arg name="dishRepository" ref="dishRepositoryBean"/>
     </bean>
 
     <bean name="userService" class="com.restarant.controller.service.UserService">
         <constructor-arg name="userDAO" ref="userDAO"/>
-        <constructor-arg name="userRepository" ref="repository"/>
+        <constructor-arg name="userRepository" ref="userRepositoryBean"/>
     </bean>
-    
+
+    <bean name="userRepositoryBean" class="com.restarant.model.repository.UserRepository"/>
+    <bean name="dishRepositoryBean" class="com.restarant.model.repository.DishRepository"></bean>
+
+    <bean id="CUserDetailsService" class="com.restarant.controller.security.CustomUserDetailsService">
+        <constructor-arg name="userRepository" ref="userRepositoryBean"/>
+        <constructor-arg name="userDAO" ref="userDAO"/>
+    </bean>
+
     <security:http auto-config="true">
         <security:intercept-url pattern="/user/*" access="hasRole('USER')"/>
         <security:intercept-url pattern="/admin/*" access="hasRole('ADMIN')"/>
+        <security:intercept-url pattern="/admin/dish/*" access="hasRole('ADMIN')"/>
         <security:intercept-url pattern="/login" access="permitAll"/>
         <security:intercept-url pattern="/registration" access="permitAll"/>
-        <security:intercept-url pattern="/successLogin" access="hasRole('USER')"/>
+        <security:intercept-url pattern="/successLogin" access="hasAnyRole('USER', 'ADMIN')"/>
 
         <security:form-login
                 login-page="/login"

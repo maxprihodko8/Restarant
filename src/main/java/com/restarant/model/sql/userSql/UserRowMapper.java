@@ -1,4 +1,4 @@
-package com.restarant.model.sql;
+package com.restarant.model.sql.userSql;
 
 import com.restarant.model.user.UserImpl;
 import org.springframework.jdbc.core.RowMapper;

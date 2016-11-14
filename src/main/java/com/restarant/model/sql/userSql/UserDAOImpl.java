@@ -1,10 +1,9 @@
-package com.restarant.model.sql;
+package com.restarant.model.sql.userSql;
 
+import com.restarant.model.sql.CreateTablesQueries;
+import com.restarant.model.sql.TablesForSqlNames;
 import com.restarant.model.user.UserImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.support.JdbcDaoSupport;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.sql.SQLException;
@@ -15,6 +14,7 @@ public class UserDAOImpl implements UserDAO {
 
     //@Autowired
     private JdbcTemplate jdbcTemplate;
+    String userTable = TablesForSqlNames.usersTableName;
 
     UserDAOImpl(JdbcTemplate jdbcTemplate){
         this.jdbcTemplate = jdbcTemplate;
@@ -27,11 +27,11 @@ public class UserDAOImpl implements UserDAO {
     public void saveOrUpdate(UserImpl user) {
         try {
             UserImpl userBySQL = getByName(user.getName());
-            String userUpdateQuery = "UPDATE" + TablesForSqlNames.usersTableName +
+            String userUpdateQuery = "UPDATE" + userTable +
                     "SET name=?, password=?, admin=?;";
             jdbcTemplate.update(userUpdateQuery, user.getName(), user.getPassword(), user.isAdmin());
         } catch (Exception e){
-            String userAddQuery = "INSERT INTO" + TablesForSqlNames.usersTableName +
+            String userAddQuery = "INSERT INTO" + userTable +
                     "(name, password, admin) VALUES " + " (?,?,?);";
             jdbcTemplate.update(userAddQuery, user.getName(), user.getPassword(),
                     user.isAdmin());
@@ -51,17 +51,17 @@ public class UserDAOImpl implements UserDAO {
     }
 
     public void delete(int userId) {
-        String deleteUserQuery = "DELETE FROM" + TablesForSqlNames.usersTableName + "where id=?;";
+        String deleteUserQuery = "DELETE FROM" + userTable + "where id=?;";
         jdbcTemplate.update(deleteUserQuery, userId);
     }
 
     public void delete(String userName) {
-        String deleteUserQuery = "DELETE FROM" + TablesForSqlNames.usersTableName + "where name=?;";
+        String deleteUserQuery = "DELETE FROM" + userTable + "where name=?;";
         jdbcTemplate.update(deleteUserQuery, userName);
     }
 
     public UserImpl get(int userId) {
-        String getUserByIdQuery = "SELECT * FROM" + TablesForSqlNames.usersTableName + "where id = " + userId + ";";
+        String getUserByIdQuery = "SELECT * FROM" + userTable + "where id = " + userId + ";";
         List <UserImpl> userbyName = jdbcTemplate.query(getUserByIdQuery, new UserRowMapper());
         //return  getJdbcTemplate().queryForObject(getByNameUser, new Object[] {name},
         //        new BeanPropertyRowMapper<UserImpl>(UserImpl.class));
@@ -69,7 +69,7 @@ public class UserDAOImpl implements UserDAO {
     }
 
     public UserImpl getByName(String name) {
-        String getByNameUserQuery = "SELECT * FROM" + TablesForSqlNames.usersTableName + "where name = " +" \"" + name + "\"" + ";";
+        String getByNameUserQuery = "SELECT * FROM" + userTable + "where name = " +" \"" + name + "\"" + ";";
         List <UserImpl> userbyName = jdbcTemplate.query(getByNameUserQuery, new UserRowMapper());
         //return  getJdbcTemplate().queryForObject(getByNameUser, new Object[] {name},
         //        new BeanPropertyRowMapper<UserImpl>(UserImpl.class));
@@ -77,8 +77,7 @@ public class UserDAOImpl implements UserDAO {
     }
 
     public List<UserImpl> list() {
-
-        String getAllUsersQuery = "SELECT * FROM " + TablesForSqlNames.usersTableName + ";";
+        String getAllUsersQuery = "SELECT * FROM " + userTable + ";";
         List users = new ArrayList<UserImpl>();
         users = jdbcTemplate.query(getAllUsersQuery, new UserRowMapper());
         return users;

@@ -1,6 +1,7 @@
-package com.restarant.controller;
+package com.restarant.controller.controller;
 
 import com.restarant.controller.service.UserService;
+import com.restarant.model.user.CheckUser;
 import com.restarant.model.user.UserImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -28,7 +29,7 @@ public class RegistrationController {
         return modelAndView;
     }
 
-    @RequestMapping(value = "/check-user", method = RequestMethod.POST)
+    /*@RequestMapping(value = "/check-user", method = RequestMethod.POST)
     public ModelAndView tryLogin(@ModelAttribute("userData") UserImpl user){
         try{
             userService.getUser(user.getName());
@@ -44,7 +45,7 @@ public class RegistrationController {
             modelAndView.addObject("messageError", "Вы не зашли в систему или не зарегистрированы!");
             return modelAndView;
         }
-    }
+    }*/
 
     @RequestMapping(value = "/registration", method = RequestMethod.GET)
     public ModelAndView registration(){
@@ -59,14 +60,20 @@ public class RegistrationController {
     public ModelAndView checkRegistration(@ModelAttribute("userData") UserImpl user){
         ModelAndView modelAndView = new ModelAndView();
         try {
-            userService.getUser(user.getName());
-            modelAndView.addObject("messageError", "Этот пользователь уже зарегистрирован");
-            modelAndView.setViewName("registration");
+            CheckUser checkUser = new CheckUser();
+            boolean resultOfCheck =  checkUser.checkUserOnLoginAndPassword(user);
+            if(resultOfCheck) {
+                userService.getUser(user.getName());
+                modelAndView.addObject("messageError", "Этот пользователь уже зарегистрирован");
+            } else {
+                modelAndView.addObject("messageError", "Проверьте логин и пароль - они не содержат более 3 и менее 30 символов!");
+            }
+            modelAndView.setViewName("/registration");
             return modelAndView;
         } catch (UsernameNotFoundException e){
             userService.saveUser(user);
             modelAndView.addObject("messageError", "Можете входить в систему, вы зарегистрированы!");
-            modelAndView.setViewName("login");
+            modelAndView.setViewName("/login");
             return modelAndView;
         }
     }
@@ -82,10 +89,26 @@ public class RegistrationController {
 
     @RequestMapping(value = "/successLogin")
     public ModelAndView userPage(){
+        if(userService.isUserAdmin()){
+            ModelAndView modelAndView = new ModelAndView();
+            modelAndView.setViewName("/admin/mainPage");
+            userService.logInUser();
+            return modelAndView;
+        } else {
+            ModelAndView modelAndView = new ModelAndView();
+            modelAndView.addObject("userData", new UserImpl());
+            modelAndView.setViewName("/user/mainPage");
+            userService.logInUser();
+            return modelAndView;
+        }
+    }
+
+    @RequestMapping(value = "/errorLogin")
+    public ModelAndView errorLogin(){
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("userData", new UserImpl());
-        modelAndView.setViewName("/user/userMainPage");
-        userService.logInUser();
+        modelAndView.setViewName("login");
+        modelAndView.addObject("messageError", "Вы ввели неверные данные или не зарегистрированы!");
         return modelAndView;
     }
 }

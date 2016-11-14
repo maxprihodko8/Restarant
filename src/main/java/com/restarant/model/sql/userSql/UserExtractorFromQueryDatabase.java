@@ -1,4 +1,4 @@
-package com.restarant.model.sql;
+package com.restarant.model.sql.userSql;
 
 import com.restarant.model.user.UserImpl;
 import org.springframework.dao.DataAccessException;
@@ -15,7 +15,7 @@ public class UserExtractorFromQueryDatabase implements ResultSetExtractor <UserI
             user.setId(resultSet.getInt(1));
             user.setName(resultSet.getString(2));
             user.setPassword(resultSet.getString(3));
-            user.setAdmin(false);
+            user.setAdmin(resultSet.getBoolean(4));
 
             return user;
         }

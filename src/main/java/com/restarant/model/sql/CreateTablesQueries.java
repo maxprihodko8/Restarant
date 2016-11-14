@@ -12,4 +12,10 @@ final public class CreateTablesQueries {
 
     static final public String createbuyingTable = "";
 
+    static final public String createDishTable = "CREATE TABLE IF NOT EXISTS dish " +
+            "( id INT PRIMARY KEY NOT NULL AUTO_INCREMENT, " +
+            " name VARCHAR(50), " +
+            "price INT, " +
+            "type VARCHAR(10));";
+
 }

@@ -2,7 +2,7 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html ng-app>
+<html>
 <head>
     <title>Restarant</title>
 </head>
@@ -54,9 +54,90 @@
         <h3 style="text-align: center;"><span style="color: #000000;">Привет, <sec:authentication property="name"/> !</span></h3>
         </sec:authorize>
         <h1 style="text-align: center;"><span style="color: #800000;"><strong>Добро пожаловать в наш ресторан!</strong></span></h1>
-        <p>Сегодня у нас такие блюда:&nbsp;</p>
-        <p>&nbsp;</p>
+        <p>Сегодня у нас такие блюда:</p>
     </div>
+    <div>
+        <h2>Первые блюда</h2>
+        <table>
+            <tr>
+                <td> ID </td>
+                <td> Название </td>
+                <td> Цена </td>
+            </tr>
+            <c:forEach items='${dishList}' var="dish">
+                <c:if test="${dish.type eq 'Первое'}">
+                <tr>
+                    <td> <c:out value='${dish.id}'/> </td>>
+                    <td> <c:out value='${dish.name}'/> </td>
+                    <td> <c:out value='${dish.price}'/> </td>
+                    <td> <c:out value='${dish.type}'/> </td>
+                </tr>
+                </c:if>
+
+            </c:forEach>
+
+        </table>
+        <h2>Вторые блюда</h2>
+        <table>
+            <tr>
+                <td> ID </td>
+                <td> Название </td>
+                <td> Цена </td>
+            </tr>
+            <c:forEach items='${dishList}' var="dish">
+                <c:if test="${dish.type eq 'Второе'}">
+                    <tr>
+                        <td> <c:out value='${dish.id}'/> </td>>
+                        <td> <c:out value='${dish.name}'/> </td>
+                        <td> <c:out value='${dish.price}'/> </td>
+                        <td> <c:out value='${dish.type}'/> </td>
+                    </tr>
+                </c:if>
+
+            </c:forEach>
+
+        </table>
+        <h2>Третьи блюда</h2>
+        <table>
+            <tr>
+                <td> ID </td>
+                <td> Название </td>
+                <td> Цена </td>
+            </tr>
+            <c:forEach items='${dishList}' var="dish">
+                <c:if test="${dish.type eq 'Третье'}">
+                    <tr>
+                        <td> <c:out value='${dish.id}'/> </td>>
+                        <td> <c:out value='${dish.name}'/> </td>
+                        <td> <c:out value='${dish.price}'/> </td>
+                        <td> <c:out value='${dish.type}'/> </td>
+                    </tr>
+                </c:if>
+
+            </c:forEach>
+
+        </table>
+        <h2>Остальные блюда</h2>
+        <table>
+            <tr>
+                <td> ID </td>
+                <td> Название </td>
+                <td> Цена </td>
+            </tr>
+            <c:forEach items='${dishList}' var="dish">
+                <c:if test="${dish.type ne 'Первое' && dish.type ne 'Второе' && dish.type ne 'Третье'}">
+                    <tr>
+                        <td> <c:out value='${dish.id}'/> </td>>
+                        <td> <c:out value='${dish.name}'/> </td>
+                        <td> <c:out value='${dish.price}'/> </td>
+                        <td> <c:out value='${dish.type}'/> </td>
+                    </tr>
+                </c:if>
+            </c:forEach>
+
+        </table>
+    </div>
+
 </div>
 
 </body>

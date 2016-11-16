@@ -7,6 +7,9 @@
     <title>Restarant Dishes</title>
 </head>
 
+<meta name="_csrf" content="${_csrf.token}"/>
+<meta name="_csrf_header" content="${_csrf.headerName}"/>
+
 <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular.js"></script>
 
 <script type="text/javascript">
@@ -128,8 +131,7 @@
 </div>
 
 -->
-<meta name="_csrf" content="${_csrf.token}"/>
-<meta name="_csrf_header" content="${_csrf.headerName}"/>
+
 <form ng-submit="submitDish()" name="dForm">
     <table>
         <tr>
@@ -157,7 +159,7 @@
         <tr>
             <td>Тип</td>
             <td>
-                <input type="" ng-model="dishForm.type" name="dishType" placeholder="Enter type" required ng-minlenght="4"/>
+                <input type="text" ng-model="dishForm.type" name="dishType" placeholder="Enter type" required ng-minlenght="4"/>
                 <span ng-show="dForm.$dirty && dForm.dishType.$error.required">Это поле обзательно для заполнения</span>
                 <span ng-show="dForm.$dirty && dForm.dishType.$error.minlength">Это поле должно быть больше 3 символов</span>
                 <span ng-show="dForm.$dirty && dForm.dishType.$invalid">Это поле не валидно</span>

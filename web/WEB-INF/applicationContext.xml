@@ -38,8 +38,16 @@
         <constructor-arg name="userRepository" ref="userRepositoryBean"/>
     </bean>
 
+    <bean name="orderServiceBean" class="com.restarant.controller.service.OrderService">
+        <constructor-arg name="listOrders" ref="listOfOrdersBean"/>
+    </bean>
+
+
     <bean name="userRepositoryBean" class="com.restarant.model.repository.UserRepository"/>
-    <bean name="dishRepositoryBean" class="com.restarant.model.repository.DishRepository"></bean>
+    <bean name="dishRepositoryBean" class="com.restarant.model.repository.DishRepository"/>
+    <bean name="listOfOrdersBean" class="com.restarant.model.order.ListOrders">
+        <constructor-arg name="dishService" ref="dishService"/>
+    </bean>
 
     <bean id="CUserDetailsService" class="com.restarant.controller.security.CustomUserDetailsService">
         <constructor-arg name="userRepository" ref="userRepositoryBean"/>

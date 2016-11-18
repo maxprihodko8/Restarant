@@ -1,8 +1,9 @@
 package com.restarant.model.order;
 
 public class SimpleOrder {
-    private String name;
-    private Integer count;
+    public Integer id;
+    public String name;
+    public Integer count;
 
     public Integer getCount() {
         return count;
@@ -21,6 +22,13 @@ public class SimpleOrder {
         this.name = name;
     }
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
 
 }

@@ -55,24 +55,38 @@ public class ListOrders {
             orderArrayList.addAll(getOrdersOfUser(user));
             ArrayList<Dish> dishes = new ArrayList<Dish>();
             dishes.addAll(dishService.getDishList());
-            int result = 0;
-            for (Order o : orderArrayList){
-                HashMap<String, Integer> hashMap =  o.getMapOfDishes();
-                for(Dish d : dishes){
-                    for (Map.Entry<String, Integer> entry : hashMap.entrySet()){
-                        String dishName = entry.getKey();
-                        if(dishName.equals(d.getName())){
-                            result += d.getPrice() * entry.getValue();
-                        }
-                    }
-                }
-            }
-            return result;
+            return calcSum(orderArrayList, dishes);
         } catch (NameNotFoundException e){
             throw new NameNotFoundException();
         } catch (NullPointerException e){
             throw new NameNotFoundException();
         }
+    }
+
+    public int submitPriceForOrders(List<Order> orderList) throws NameNotFoundException {
+        try {
+            ArrayList<Dish> dishes = new ArrayList<Dish>();
+            dishes.addAll(dishService.getDishList());
+            return calcSum(orderList, dishes);
+        } catch (NullPointerException e){
+            throw new NameNotFoundException();
+        }
+    }
+
+    private int calcSum(List<Order> orderList, List<Dish> dishes){
+        int result = 0;
+        for (Order o : orderList){
+            HashMap<String, Integer> hashMap =  o.getMapOfDishes();
+            for(Dish d : dishes){
+                for (Map.Entry<String, Integer> entry : hashMap.entrySet()){
+                    String dishName = entry.getKey();
+                    if(dishName.equals(d.getName())){
+                        result += d.getPrice() * entry.getValue();
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     public void removeOrder(UserImpl user, Order order) throws NameNotFoundException {

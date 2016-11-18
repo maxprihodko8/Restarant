@@ -64,7 +64,6 @@ public class UserController {
 
     @RequestMapping(value = "/user/userOrders", method = RequestMethod.GET, headers = "Accept=application/json")
     public List<Order> getUserOrders(){
-        orderService.addData();
         UserImpl user =  userService.getCurrentUser();
         try {
             List<Order> orders = orderService.getOrdersOfUser(user);
@@ -91,7 +90,7 @@ public class UserController {
 
     @RequestMapping(value = "/user/deleteOrder/{id}", method = RequestMethod.GET)
     public void DeleteOrder(@PathVariable Integer id){
-        orderService.removeOrder(userService.getCurrentUser(), id);
+        orderService.removeOrder(id);
     }
 
 }

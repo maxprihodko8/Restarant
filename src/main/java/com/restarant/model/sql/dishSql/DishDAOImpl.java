@@ -82,7 +82,7 @@ public class DishDAOImpl implements DishDAO {
     }
 
     public Dish getByName(String name) throws NameNotFoundException {
-        String getByNameDishQuery = "SELECT * FROM" + dishTable + "where name = " +" \"" + name + "\"" + ";";
+        String getByNameDishQuery = "SELECT * FROM" + dishTable + "where name LIKE " + "\"" + name + "\"" + ";";
         /*Dish dish = getOneDish(getByNameDishQuery);
         if (dish != null) {
             return dish;

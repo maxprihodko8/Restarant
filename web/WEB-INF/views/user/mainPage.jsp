@@ -24,12 +24,12 @@
             $scope.submitPrice = 0;
             $scope.inputs = [{name : '', count : 0}];
 
-            refreshDishes();
-            refreshOrders();
-
             $scope.updateOrders = function () {
                 refreshOrders();
+                //calcOrders();
+                getSubmitPrice();
             };
+
 
             $scope.addNewDishChoise = function () {
                 $scope.inputs.push({name : '', count : 0});
@@ -70,9 +70,23 @@
                 $http({
                     method : 'GET',
                     url : 'http://localhost:8080/user/deleteOrder/' + id
+                }).then(function successCallback(response) {
+                    updateOrders();
+                }, function errorCallback(response) {
+                    updateOrders();
+                }).finally(function () {
+                    updatePrice();
+                    refreshOrders();
                 });
-
             };
+
+            function calcOrders() {
+                console.log("TEST");
+                for(var index in $scope.orders){
+                    console.log("TEST");
+                    console.log($scope.orders[index] = " " + $scope.orders[index]);
+                }
+            }
 
             function refreshDishes() {
                 $http({
@@ -96,6 +110,10 @@
                 });
             }
 
+            function updatePrice() {
+                $scope.getSubmitPrice();
+            }
+
             function getMeta(name, content) {
                 var content = (content == null) ? 'content' : content;
                 return document.querySelector("meta[name='" + name + "']").getAttribute(content);
@@ -103,12 +121,15 @@
 
             function onSuccess() {
                 refreshOrders();
+                updatePrice();
             }
 
             function onError(response) {
                 console.log(response.statusText)
             }
-
+            updatePrice();
+            refreshDishes();
+            refreshOrders();
         });
     </script>
 
@@ -164,7 +185,7 @@
     <h2>Новый заказ:</h2>
     <fieldset ng-repeat="dishInput in inputs">
         <select ng-model="dishInput.name">
-                <option ng-repeat="dish in dishes">{{dish.name}}</option>
+            <option ng-repeat="dish in dishes">{{dish.name}}</option>
         </select>
         <input type="number" ng-model="dishInput.count" name="" placeholder="Количество">
         <input type="button" value="Удалить" ng-model="inputs.name" ng-click="removeDishChoise()">

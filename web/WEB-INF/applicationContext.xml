@@ -28,6 +28,10 @@
         <constructor-arg name="jdbcTemplate" ref="jdbcTemplate"/>
     </bean>
 
+    <bean id="orderDAO" class="com.restarant.model.sql.orderSql.OrderDAOImpl" init-method="init">
+        <constructor-arg name="jdbcTemplate" ref="jdbcTemplate"/>
+    </bean>
+
     <bean id="dishService" class="com.restarant.controller.service.DishService" init-method="init">
         <constructor-arg name="dishDAO" ref="dishDAO"/>
         <constructor-arg name="dishRepository" ref="dishRepositoryBean"/>
@@ -40,6 +44,7 @@
 
     <bean name="orderServiceBean" class="com.restarant.controller.service.OrderService">
         <constructor-arg name="listOrders" ref="listOfOrdersBean"/>
+        <constructor-arg name="orderDAO" ref="orderDAO"/>
     </bean>
 
 

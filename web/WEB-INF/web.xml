@@ -36,13 +36,5 @@
         <url-pattern>/</url-pattern>
     </servlet-mapping>
 
-    <servlet>
-        <servlet-name>myServlet</servlet-name>
-        <servlet-class>com.restarant.controller.myServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>myServlet</servlet-name>
-        <url-pattern>/1</url-pattern>
-    </servlet-mapping>
 
 </web-app>

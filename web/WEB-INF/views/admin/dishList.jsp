@@ -141,7 +141,7 @@
         <tr>
             <td>Имя</td>
             <td>
-                <input type="text" ng-model="dishForm.name" name="dishName" placeholder="Enter name" required ng-minlength="4"/>
+                <input type="text" ng-model="dishForm.name" name="dishName" placeholder="Enter name" required ng-minlength="3"/>
                 <span ng-show="dForm.$dirty && dForm.dishName.$error.required"> Это поле обязательно для заполнения</span>
                 <span ng-show="dForm.$dirty && dForm.dishName.$error.minlength"> Мин длина = 3 </span>
                 <span ng-show="dForm.$dirty && dForm.dishName.$invalid"> Это поле инвалидно!</span>
@@ -159,7 +159,7 @@
         <tr>
             <td>Тип</td>
             <td>
-                <input type="text" ng-model="dishForm.type" name="dishType" placeholder="Enter type" required ng-minlenght="4"/>
+                <input type="text" ng-model="dishForm.type" name="dishType" placeholder="Enter type" required ng-minlenght="3"/>
                 <span ng-show="dForm.$dirty && dForm.dishType.$error.required">Это поле обзательно для заполнения</span>
                 <span ng-show="dForm.$dirty && dForm.dishType.$error.minlength">Это поле должно быть больше 3 символов</span>
                 <span ng-show="dForm.$dirty && dForm.dishType.$invalid">Это поле не валидно</span>

@@ -10,7 +10,7 @@
 
 <body>
 
-<h2>You have succesfully logged out from our restarant service!</h2>
-<h2><a href="/" >Main Page</a> </h2>
+<h2>Вы успешно вышли из учетной записи в нашем ресторане!</h2>
+<h2><a href="/" >На главную</a> </h2>
 </body>
 </html>

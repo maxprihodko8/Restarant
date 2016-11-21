@@ -77,15 +77,16 @@ public class ListOrders {
     private int calcSum(List<Order> orderList, List<Dish> dishes){
         int result = 0;
         for (Order o : orderList){
-            HashMap<String, Integer> hashMap =  o.getMapOfDishes();
+            /*Map<Dish, Integer> hashMap =  o.getMapOfDishes();
             for(Dish d : dishes){
-                for (Map.Entry<String, Integer> entry : hashMap.entrySet()){
-                    String dishName = entry.getKey();
+                for (Map.Entry<Dish, Integer> entry : hashMap.entrySet()){
+                    String dishName = entry.getKey().getName();
                     if(dishName.equals(d.getName())){
                         result += d.getPrice() * entry.getValue();
                     }
                 }
-            }
+            }*/
+
         }
         return result;
     }
@@ -115,7 +116,7 @@ public class ListOrders {
     }
 
     public void addSomeData(){
-        UserImpl user1 = new UserImpl();
+        /*UserImpl user1 = new UserImpl();
         UserImpl user2 = new UserImpl();
         UserImpl user3 = new UserImpl();
         Order order1 = new Order();
@@ -142,6 +143,6 @@ public class ListOrders {
         ArrayList <Order> a3 = new ArrayList<Order>();
         a3.add(order3);
         a3.add(order2);
-        orders.put(user1, a3);
+        orders.put(user1, a3);*/
     }
 }

@@ -1,5 +1,8 @@
 package com.restarant.model.dish;
 
+import javax.annotation.Resource;
+
+@Resource
 public class Dish {
     public int id;
     public String name;

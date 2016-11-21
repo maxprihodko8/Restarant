@@ -1,12 +1,15 @@
 package com.restarant.controller.controller;
 
 import com.restarant.controller.service.DishService;
+import com.restarant.controller.service.GroupOrderService;
 import com.restarant.controller.service.UserService;
 import com.restarant.model.dish.Dish;
+import com.restarant.model.group.UserGroup;
 import com.restarant.model.user.UserImpl;
 import com.sun.javafx.sg.prism.NGShape;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -25,6 +28,9 @@ public class AdminController {
     @Autowired
     DishService dishService;
 
+    @Autowired
+    GroupOrderService groupOrderService;
+
     @RequestMapping(value = "/admin/mainPage")
     public ModelAndView getAdminMainPage(){
         ModelAndView modelAndView = new ModelAndView();
@@ -40,6 +46,18 @@ public class AdminController {
         //modelAndView.addObject("userList", users);
         modelAndView.addObject("userListWithOnlineTag", userService.getUsersListWithOnlineTag());
         return modelAndView;
+    }
+
+    @RequestMapping(value = "/admin/userGroups", method = RequestMethod.GET)
+    public ModelAndView userGroupsList(){
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("/admin/userGroups");
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/admin/listAllUserGroups", method = RequestMethod.GET, headers = "Accept=application/json")
+    public List<UserGroup> getListOfuserGroups(){
+         return  groupOrderService.list();
     }
 
     @RequestMapping(value = "/admin/edit/{id}")

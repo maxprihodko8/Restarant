@@ -1,5 +1,7 @@
 package com.restarant.controller.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.restarant.controller.service.OrderService;
 import com.restarant.controller.service.UserService;
 import com.restarant.model.order.Order;
@@ -65,9 +67,10 @@ public class UserController {
     public List<Order> getUserOrders(){
         UserImpl user =  userService.getCurrentUser();
         try {
-            List<Order> orders = orderService.getOrdersOfUser(user);
-            return orders;
-        } catch (NameNotFoundException e){
+            return orderService.getOrdersOfUser(user);
+        } catch (NameNotFoundException e) {
+            //return new ArrayList<Order>();
+            System.out.println("error1");
             return new ArrayList<Order>();
         }
     }

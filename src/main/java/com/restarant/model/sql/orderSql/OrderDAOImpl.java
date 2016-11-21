@@ -1,14 +1,16 @@
 package com.restarant.model.sql.orderSql;
 
 import com.restarant.model.order.Order;
+import com.restarant.model.order.OrderWithDish;
 import com.restarant.model.order.SimpleOrder;
 import com.restarant.model.sql.CreateTablesQueries;
-import com.restarant.model.sql.userSql.UserDAO;
+import com.restarant.model.sql.dishSql.DishDAOImpl;
 import com.restarant.model.sql.userSql.UserDAOImpl;
 import com.restarant.model.user.UserImpl;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 
 import javax.naming.NameNotFoundException;
@@ -16,16 +18,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class OrderDAOImpl implements OrderDAO {
     private JdbcTemplate jdbcTemplate;
     private UserDAOImpl userDAO;
+    private DishDAOImpl dishDAO;
 
-    OrderDAOImpl(JdbcTemplate jdbcTemplate, UserDAOImpl userDAO){
+    OrderDAOImpl(JdbcTemplate jdbcTemplate, UserDAOImpl userDAO, DishDAOImpl dishDAO){
         this.jdbcTemplate = jdbcTemplate;
         this.userDAO = userDAO;
+        this.dishDAO = dishDAO;
     }
 
     public void init(){
@@ -45,16 +48,16 @@ public class OrderDAOImpl implements OrderDAO {
                     Order userOrder = orders.get(0);
                     if (!userOrder.equals(order)) {
                         String updateQuery = "UPDATE orders SET orders.dishName=?, orders.count=? WHERE orderId=?;";
-                        for (Map.Entry<String, Integer> mapVals : order.getMapOfDishes().entrySet()) {
-                            jdbcTemplate.update(updateQuery, mapVals.getKey(), mapVals.getValue(), order.getId());
+                        for (OrderWithDish o : order.getDishesForOrder()) {
+                            jdbcTemplate.update(updateQuery, o.getDish().getName(), o.getCount(), order.getId());
                         }
                     }
                 } else {
                     String newUserId = "INSERT INTO userOrders (name, orderId) VALUES (\"" + user.getName() + "\", " + order.getId() + ");";
                     String insertQuery = "INSERT INTO orders (orderId, dishName, count) VALUES (?,?,?);";
                     jdbcTemplate.execute(newUserId);
-                    for (Map.Entry<String, Integer> mapVals : order.getMapOfDishes().entrySet()) {
-                        jdbcTemplate.update(insertQuery, order.getId(), mapVals.getKey(), mapVals.getValue());
+                    for (OrderWithDish o : order.getDishesForOrder()) {
+                        jdbcTemplate.update(insertQuery, order.getId(), o.getDish().getName(), o.getCount());
                     }
                 }
             } catch (NameNotFoundException e) {
@@ -63,8 +66,8 @@ public class OrderDAOImpl implements OrderDAO {
             String createUserQuery = "INSERT INTO userOrders (name, orderId) VALUES (\"" + user.getName() + "\", " + order.getId() + ");";
             String insertQuery = "INSERT INTO orders (orderId, dishName, count) VALUES (?,?,?);";
             jdbcTemplate.execute(createUserQuery);
-            for (Map.Entry<String, Integer> mapVals : order.getMapOfDishes().entrySet()) {
-                jdbcTemplate.update(insertQuery, order.getId(), mapVals.getKey(), mapVals.getValue());
+            for (OrderWithDish o : order.getDishesForOrder()) {
+                jdbcTemplate.update(insertQuery, order.getId(), o.getDish().getName(), o.getCount());
             }
         }
     }
@@ -100,9 +103,19 @@ public class OrderDAOImpl implements OrderDAO {
         String query = "SELECT o.orderId, o.dishName, o.count FROM orders o\n" +
                 "JOIN userOrders uo ON o.orderId = uo.orderId\n" +
                 "WHERE uo.orderId =  " + orderId + ";";
+        String getUser = "SELECT name FROM userOrders where orderId = " + orderId + ";";
+
         List<SimpleOrder> orders = jdbcTemplate.query(query, new OrderRowMapper());
-        //return new Order();
-        return generateOrderListFromUnsortedOrderList(orders).get(0);
+        Order o =  generateOrderListFromUnsortedOrderList(orders).get(0);
+        List<String> creatorOfOrder = jdbcTemplate.query(getUser, new RowMapper<String>() {
+                    @Override
+                    public String mapRow(ResultSet resultSet, int i) throws SQLException {
+                        return resultSet.getString(1);
+                    }
+                });
+
+        o.setCreator(creatorOfOrder.get(0));
+        return o;
     }
 
 
@@ -150,7 +163,7 @@ public class OrderDAOImpl implements OrderDAO {
                     Order newOrder = new Order();
                     for(SimpleOrder s : simpleOrders){
                         if(so.getId().equals(s.getId())){
-                            newOrder.addDish(s.getName(), s.getCount());
+                            newOrder.addDish(dishDAO.getByName(s.getName()), s.getCount());
                         }
                     }
                     newOrder.setId(so.getId());

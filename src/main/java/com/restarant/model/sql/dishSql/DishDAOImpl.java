@@ -81,7 +81,7 @@ public class DishDAOImpl implements DishDAO {
 
     }
 
-    public Dish getByName(String name) throws NameNotFoundException {
+    public Dish getByName(String name) {
         String getByNameDishQuery = "SELECT * FROM" + dishTable + "where name LIKE " + "\"" + name + "\"" + ";";
         /*Dish dish = getOneDish(getByNameDishQuery);
         if (dish != null) {
@@ -114,11 +114,11 @@ public class DishDAOImpl implements DishDAO {
         return dish;
     }
 
-    private Dish getFirstFromList(List<Dish> dishList) throws NameNotFoundException {
+    private Dish getFirstFromList(List<Dish> dishList) {
         try{
             return dishList.get(0);
         } catch (IndexOutOfBoundsException e){
-            throw new NameNotFoundException(e.getMessage());
+            return new Dish("standartDish", 0, "none");
         }
     }
 

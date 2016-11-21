@@ -3,6 +3,7 @@ package com.restarant.controller.service;
 import com.restarant.model.repository.ListOrders;
 import com.restarant.model.order.Order;
 import com.restarant.model.order.SimpleOrder;
+import com.restarant.model.sql.dishSql.DishDAOImpl;
 import com.restarant.model.sql.orderSql.OrderDAOImpl;
 import com.restarant.model.user.UserImpl;
 
@@ -13,10 +14,12 @@ public class OrderService {
 
     private ListOrders listOrders;
     private OrderDAOImpl orderDAO;
+    private DishDAOImpl dishDAO;
 
-    public OrderService(ListOrders listOrders, OrderDAOImpl orderDAO) {
+    public OrderService(ListOrders listOrders, OrderDAOImpl orderDAO, DishDAOImpl dishDAO) {
         this.listOrders = listOrders;
         this.orderDAO = orderDAO;
+        this.dishDAO = dishDAO;
     }
 
     public void addOrder(UserImpl user, Order order) {
@@ -27,7 +30,7 @@ public class OrderService {
     public void addMultipleItemsToOneOrder(UserImpl user, SimpleOrder[] simpleOrder) {
         Order order = new Order();
         for (SimpleOrder s : simpleOrder) {
-            order.addDish(s.getName(), s.getCount());
+            order.addDish(dishDAO.getByName(s.getName()), s.getCount());
         }
         addOrder(user, order);
     }

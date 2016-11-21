@@ -3,6 +3,7 @@ package com.restarant.controller.controller;
 import com.restarant.controller.service.GroupOrderService;
 import com.restarant.controller.service.UserService;
 import com.restarant.model.group.UserGroup;
+import com.restarant.model.order.SimpleOrder;
 import com.restarant.model.user.UserImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -82,6 +83,12 @@ public class GroupUserController {
     public List<String> getGroupNamesList(){
         UserImpl user = userService.getCurrentUser();
         return groupOrderService.getGroupNames(user);
+    }
+
+    @RequestMapping(value = "/user/saveGroupOrder/{groupName}", method = RequestMethod.POST, headers = "Accept=application/json")
+    public void saveOrderInGroup(@RequestBody SimpleOrder[] simpleOrders, @PathVariable String groupName){
+        UserImpl user = userService.getCurrentUser();
+        groupOrderService.addMultipleOrdersToUserInGroup(user, simpleOrders, groupName);
     }
 
 }

@@ -2,6 +2,7 @@ package com.restarant.controller.service;
 
 import com.restarant.model.group.UserGroup;
 import com.restarant.model.order.Order;
+import com.restarant.model.order.SimpleOrder;
 import com.restarant.model.sql.groupSql.GroupOrderDAOImpl;
 import com.restarant.model.user.UserImpl;
 import org.springframework.stereotype.Service;
@@ -11,9 +12,11 @@ import java.util.List;
 @Service
 public class GroupOrderService {
     private GroupOrderDAOImpl groupOrderDAO;
+    private DishService dishService;
 
-    GroupOrderService(GroupOrderDAOImpl groupOrderDAO) {
+    GroupOrderService(GroupOrderDAOImpl groupOrderDAO, DishService dishService) {
         this.groupOrderDAO = groupOrderDAO;
+        this.dishService = dishService;
     }
 
     public void save(String user, Order order, Integer userGroup){
@@ -70,5 +73,14 @@ public class GroupOrderService {
 
     public List<UserGroup> listGroupsOfUser(UserImpl user){
         return groupOrderDAO.getByUser(user);
+    }
+
+    public void addMultipleOrdersToUserInGroup(UserImpl user, SimpleOrder[] simpleOrder, String groupName) {
+        Order order = new Order();
+        int groupId = groupOrderDAO.getGroupIdByName(groupName);
+        for (SimpleOrder s : simpleOrder) {
+            order.addDish(dishService.getDishByName(s.getName()), s.getCount());
+        }
+        save(user.getName(), order, groupId);
     }
 }

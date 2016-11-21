@@ -171,6 +171,17 @@ public class GroupOrderDAOImpl implements GroupOrderDAO {
         return groups;
     }
 
+    public int getGroupIdByName(String name){
+        String query = "SELECT id from groups where name LIKE \"" + name + "\";";
+        List<Integer> res = jdbcTemplate.query(query, new RowMapper<Integer>() {
+            @Override
+            public Integer mapRow(ResultSet resultSet, int i) throws SQLException {
+                return resultSet.getInt(1);
+            }
+        });
+        return res.get(0);
+    }
+
     public List<String> getGroupNamesList(UserImpl user){
         String query = "SELECT groups.name FROM groups\n" +
                 " WHERE groups.id NOT IN (SELECT id FROM usersOfGroup WHERE usersOfGroup.name LIKE \"afaffa\")\n" +
@@ -199,6 +210,7 @@ public class GroupOrderDAOImpl implements GroupOrderDAO {
             }
             if (!found) {
                 userGroup.addUser(s.getUserName());
+                check.add(s.getUserName());
             }
         }
         return userGroup;

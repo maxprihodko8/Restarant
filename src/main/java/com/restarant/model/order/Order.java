@@ -1,46 +1,51 @@
 package com.restarant.model.order;
 
-import com.sun.org.apache.xpath.internal.operations.Or;
+import com.restarant.model.dish.Dish;
 
 import javax.naming.NameNotFoundException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class Order {
-    private HashMap<String, Integer> dishesForOrder = new HashMap<String, Integer>();
+    //private Map<Dish, Integer> dishesForOrder = new HashMap<Dish, Integer>();
+    private List<OrderWithDish> dishesForOrder = new ArrayList<>();
     private Integer id = new Random().nextInt();
+    private String creator;
 
-    public void addDish(String dish, int number){
-        Integer integer =  dishesForOrder.get(dish);
-        if (integer == null)
-            dishesForOrder.put(dish,number);
-        else {
-            dishesForOrder.merge(dish, number, Integer::sum);
-        }
+    public String getCreator() {
+        return creator;
     }
 
-    public void removeDish(String dish){
+    public void setCreator(String creator) {
+        this.creator = creator;
+    }
+
+    public List<OrderWithDish> getDishesForOrder() {
+        return dishesForOrder;
+    }
+
+    public void setDishesForOrder(List<OrderWithDish> order) {
+        this.dishesForOrder = order;
+    }
+
+    public void addDish(Dish dish, int number) {
+        for(OrderWithDish o : dishesForOrder){
+            if(o.getDish().equals(dish)) {
+                dishesForOrder.remove(o);
+            }
+        }
+        dishesForOrder.add(new OrderWithDish(dish, number));
+    }
+
+    public void removeDish(Dish dish){
         dishesForOrder.remove(dish);
     }
 
-    public HashMap <String, Integer> getMapOfDishes(){
-        return dishesForOrder;
-    }
-
-    public Integer getDishVal(String dish) throws NameNotFoundException {
-        Integer integer =  dishesForOrder.get(dish);
-        if (integer != null){
-            return integer;
+    public Integer getDishVal(Dish dish) throws NameNotFoundException {
+        for(OrderWithDish o : dishesForOrder){
+            if(o.getDish().equals(dish))
+                return o.getCount();
         }
-        else {
-            throw new NameNotFoundException();
-        }
-    }
-
-    public HashMap<String, Integer> returnDishes(){
-        return dishesForOrder;
+        throw new NameNotFoundException();
     }
 
     public Integer getId(){
@@ -55,12 +60,28 @@ public class Order {
     public boolean equals(Object object){
         if (this == object){
             return true;
-        } else if (object instanceof Order){
+        } else if(object instanceof Order){
+            if(this.id.equals(((Order) object).getId())){
+                for(OrderWithDish o1 : ((Order) object).dishesForOrder){
+                    boolean found = false;
+                    for(OrderWithDish o2 : this.dishesForOrder){
+                        if(o1.getDish().equals(o2.getDish()) && o1.getCount() == o2.getCount()){
+                            found = true;
+                        }
+                        if(!found)
+                            return false;
+                    }
+                }
+                return true;
+            }
+        }
+        return false;
+        /* else if (object instanceof Order){
             Order o = (Order) object;
             if(o.getId().equals(this.getId())){
-                for(Map.Entry<String, Integer> thisEntry : this.dishesForOrder.entrySet()){
+                for(Map.Entry<Dish, Integer> thisEntry : this.dishesForOrder.entrySet()){
                     boolean found = false;
-                    for(Map.Entry<String, Integer> objEntry : o.dishesForOrder.entrySet()){
+                    for(Map.Entry<Dish, Integer> objEntry : o.dishesForOrder.entrySet()){
                         if(thisEntry.getValue().equals(objEntry.getValue()) && thisEntry.getKey().equals(objEntry.getKey())){
                             found = true;
                         }
@@ -72,7 +93,7 @@ public class Order {
                 return true;
             }
         }
-        return false;
+        return false;*/
     }
 
 

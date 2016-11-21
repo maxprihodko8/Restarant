@@ -27,7 +27,7 @@ public class DishService {
         dishRepository.updateDishList(dishDAO.list());
     }
 
-    public Dish getDishByName(String name) throws NameNotFoundException {
+    public Dish getDishByName(String name)  {
         /*try {
             return dishRepository.getDishByName(name);
         } catch (NameNotFoundException e){
@@ -37,11 +37,7 @@ public class DishService {
                 throw new NameNotFoundException();
             }
         }*/
-        try {
             return dishDAO.getByName(name);
-        } catch (NameNotFoundException e1){
-            throw new NameNotFoundException();
-        }
     }
 
     public Dish getDish(int id) throws NameNotFoundException {

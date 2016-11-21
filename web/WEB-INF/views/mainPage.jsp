@@ -63,7 +63,6 @@
     </div>
     <div>
         <sec:authorize access="isAuthenticated()">
-            <p><a class="button_logout" href="<c:url value="/logout"/> ">
 
         <h3 style="text-align: center;"><span style="color: #000000;">Привет, <sec:authentication property="name"/> !</span></h3>
         </sec:authorize>

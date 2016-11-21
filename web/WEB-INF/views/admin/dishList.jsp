@@ -11,6 +11,7 @@
 <meta name="_csrf_header" content="${_csrf.headerName}"/>
 
 <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular.js"></script>
+<link rel="stylesheet" type="text/css" href="/resources/css/someStyles.css"/>
 
 <script type="text/javascript">
     var app = angular.module("dishApp",[]);
@@ -99,6 +100,9 @@
 
 
 <body ng-app="dishApp" ng-controller="dishController">
+<a href="/admin/mainPage">На главную</a>
+<br>
+<a href="/">На самую главную</a>
 <!--<div>
     <h2>В рестаране сегодня вот такие блюда:</h2>
     <table>

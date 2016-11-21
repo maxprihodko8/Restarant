@@ -23,11 +23,12 @@
             $scope.dishes = [];
             $scope.submitPrice = 0;
             $scope.inputs = [{name : '', count : 0}];
+            $scope.price = 0;
 
             $scope.updateOrders = function () {
                 refreshOrders();
                 calcOrders();
-                getSubmitPrice();
+                $scope.calcPrice();
             };
 
 
@@ -55,17 +56,6 @@
                 }).then(onSuccess, onError);
             };
 
-            $scope.getSubmitPrice = function () {
-                $http({
-                    method : 'GET',
-                    url : 'http://localhost:8080/user/getSubmitPrice'
-                }).then(function successCallback(response) {
-                    $scope.submitPrice = response.data;
-                }, function errorCallback(response) {
-                    console.log(response.statusText)
-                });
-            };
-
             $scope.deleteOrder = function (id) {
                 $http({
                     method : 'GET',
@@ -76,7 +66,7 @@
                     console.log(response.statusText);
                 }).finally(function () {
                     refreshOrders();
-                    updatePrice();
+                    $scope.calcPrice();
                 });
             };
 
@@ -93,6 +83,29 @@
                     }
                 }
             }
+
+            $scope.calcPrice = function () {
+                $scope.price = 0;
+                for(var i in $scope.orders){
+                    var ii = $scope.orders[i];
+                    for(var m in ii.dishesForOrder){
+                        var mm = ii.dishesForOrder[m];
+                        $scope.price += mm.dish.price * mm.count;
+                    }
+                }
+            };
+
+            $scope.getOrderPrice = function (order) {
+                var price = 0;
+                if($scope.orders.indexOf(order) !== -1){
+                    var order = $scope.orders[$scope.orders.indexOf(order)];
+                    for(m in order.dishesForOrder){
+                        var mm = order.dishesForOrder[m];
+                        price += mm.dish.price * mm.count;
+                    }
+                }
+                return price;
+            };
 
             function refreshDishes() {
                 $http({
@@ -111,13 +124,10 @@
                     url : 'http://localhost:8080/user/userOrders'
                 }).then(function successCallback(response) {
                     $scope.orders = response.data;
+                    $scope.calcPrice();
                 }, function errorCallback(response) {
                     console.log(response.statusText);
                 });
-            }
-
-            function updatePrice() {
-                $scope.getSubmitPrice();
             }
 
             function getMeta(name, content) {
@@ -127,13 +137,12 @@
 
             function onSuccess() {
                 refreshOrders();
-                updatePrice();
+                $scope.calcPrice();
             }
 
             function onError(response) {
                 console.log(response.statusText)
             }
-            updatePrice();
             refreshDishes();
             refreshOrders();
         });
@@ -171,15 +180,15 @@
     <div ng-repeat="order in orders">
 
             Заказ: {{order.id}} <input ng-click="$watch(deleteOrder(order.id), updateOrders())" type="button" value="Удалить заказ"/>
-            <div ng-repeat="(k,v) in order">
-
-                <div ng-repeat="(k1, v1) in v">
-                    {{k1}} - {{v1}}
-                </div>
-            </div>
+        <div ng-repeat="obj in order.dishesForOrder">
+            {{obj.dish.name}} - Количество {{obj.count}} - Цена {{obj.dish.price * obj.count}}
+        </div>
+        Сумма ордера :
+        <b>{{getOrderPrice(order)}}</b>
     </div>
-<input ng-click="getSubmitPrice()" type="button" value="Посчитать общую стоимость">
-{{submitPrice}}
+Сумма по ордерам:
+<b><div ng-bind="price"></div></b>
+
 <div>
     <h2>Новый заказ:</h2>
     <fieldset ng-repeat="dishInput in inputs">

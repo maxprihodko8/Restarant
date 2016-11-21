@@ -19,7 +19,6 @@ import java.util.List;
 
 @EnableWebMvc
 @RestController
-@Controller
 public class UserController {
 
     @Autowired

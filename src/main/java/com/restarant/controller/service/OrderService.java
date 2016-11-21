@@ -1,12 +1,10 @@
 package com.restarant.controller.service;
 
-import com.restarant.model.order.ListOrders;
+import com.restarant.model.repository.ListOrders;
 import com.restarant.model.order.Order;
 import com.restarant.model.order.SimpleOrder;
 import com.restarant.model.sql.orderSql.OrderDAOImpl;
 import com.restarant.model.user.UserImpl;
-import com.sun.org.apache.xpath.internal.operations.Or;
-import org.springframework.security.acls.model.NotFoundException;
 
 import javax.naming.NameNotFoundException;
 import java.util.List;

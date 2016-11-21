@@ -30,6 +30,12 @@
 
     <bean id="orderDAO" class="com.restarant.model.sql.orderSql.OrderDAOImpl" init-method="init">
         <constructor-arg name="jdbcTemplate" ref="jdbcTemplate"/>
+        <constructor-arg name="userDAO" ref="userDAO"/>
+    </bean>
+
+    <bean id="groupOrderDAO" class="com.restarant.model.sql.groupSql.GroupOrderDAOImpl" init-method="init">
+        <constructor-arg name="jdbcTemplate" ref="jdbcTemplate"/>
+        <constructor-arg name="orderDAOImpl" ref="orderDAO"/>
     </bean>
 
     <bean id="dishService" class="com.restarant.controller.service.DishService" init-method="init">
@@ -42,15 +48,19 @@
         <constructor-arg name="userRepository" ref="userRepositoryBean"/>
     </bean>
 
-    <bean name="orderServiceBean" class="com.restarant.controller.service.OrderService">
+    <bean name="orderService" class="com.restarant.controller.service.OrderService">
         <constructor-arg name="listOrders" ref="listOfOrdersBean"/>
         <constructor-arg name="orderDAO" ref="orderDAO"/>
+    </bean>
+
+    <bean name="groupOrderService" class="com.restarant.controller.service.GroupOrderService">
+        <constructor-arg name="groupOrderDAO" ref="groupOrderDAO"/>
     </bean>
 
 
     <bean name="userRepositoryBean" class="com.restarant.model.repository.UserRepository"/>
     <bean name="dishRepositoryBean" class="com.restarant.model.repository.DishRepository"/>
-    <bean name="listOfOrdersBean" class="com.restarant.model.order.ListOrders">
+    <bean name="listOfOrdersBean" class="com.restarant.model.repository.ListOrders">
         <constructor-arg name="dishService" ref="dishService"/>
     </bean>
 

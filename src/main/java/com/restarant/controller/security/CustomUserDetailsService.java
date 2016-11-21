@@ -28,7 +28,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
         try {
-            //UserImpl user = repository.getUserByName(userName);
+            //UserImpl user = repository.getUserByName(currentUser);
             UserImpl user = userDAO.getByName(userName);
             Set<GrantedAuthority> roles = new HashSet<GrantedAuthority>();
             if (!user.isAdmin())

@@ -20,10 +20,24 @@
                     <p><a href="/"> <span style="color: #800000; background-color: #ffcc00;">Домой</span></a></p>
                 </td>
                 <td>
-                    <p><a href="/user/course"> <span style="color: #800000; background-color: #ffcc00;">Сделать заказ</span></a></p>
+                    <div>
+                        <sec:authorize access="isAuthenticated()">
+                            <p><a href="/user/mainPage"> <span style="color: #800000; background-color: #ffcc00;">Сделать заказ</span></a></p>
+                        </sec:authorize>
+                        <sec:authorize access="!isAuthenticated()">
+                            <p><a href="/login"> <span style="color: #800000; background-color: #ffcc00;">Сделать заказ</span></a></p>
+                        </sec:authorize>
+                    </div>
                 </td>
                 <td>
-                    <p><a href="/user/multipleCource"> <span style="color: #800000; background-color: #ffcc00;">Групповой заказ</span></a></p>
+                    <div>
+                        <sec:authorize access="isAuthenticated()">
+                            <p><a href="/user/groupOrder"> <span style="color: #800000; background-color: #ffcc00;">Групповой заказ</span></a></p>
+                        </sec:authorize>
+                        <sec:authorize access="!isAuthenticated()">
+                            <p><a href="/user/login"> <span style="color: #800000; background-color: #ffcc00;">Групповой заказ</span></a></p>
+                        </sec:authorize>
+                    </div>
                 </td>
                 <td>
                     <div style="margin-left: 30px;">

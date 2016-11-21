@@ -3,6 +3,8 @@ package com.restarant.model.sql.orderSql;
 import com.restarant.model.order.Order;
 import com.restarant.model.order.SimpleOrder;
 import com.restarant.model.sql.CreateTablesQueries;
+import com.restarant.model.sql.userSql.UserDAO;
+import com.restarant.model.sql.userSql.UserDAOImpl;
 import com.restarant.model.user.UserImpl;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -19,14 +21,20 @@ import java.util.Map;
 @Service
 public class OrderDAOImpl implements OrderDAO {
     private JdbcTemplate jdbcTemplate;
+    private UserDAOImpl userDAO;
 
-    OrderDAOImpl(JdbcTemplate jdbcTemplate){
+    OrderDAOImpl(JdbcTemplate jdbcTemplate, UserDAOImpl userDAO){
         this.jdbcTemplate = jdbcTemplate;
+        this.userDAO = userDAO;
     }
 
     public void init(){
         jdbcTemplate.execute(CreateTablesQueries.createUserOrdersTable);
         jdbcTemplate.execute(CreateTablesQueries.createOrdersTable);
+    }
+
+    public void saveOrUpdate(String userName, Order order){
+        saveOrUpdate(userDAO.getByName(userName), order);
     }
 
     public void saveOrUpdate(UserImpl user, Order order) {
@@ -62,12 +70,14 @@ public class OrderDAOImpl implements OrderDAO {
     }
 
     public void delete(Order order) {
-        String query = "DELETE FROM userOrders WHERE userOrders.orderId=" + order.getId() + ";";
+        String query = "DELETE FROM userOrders WHERE userOrders.orderId=" + order.getId() +
+                " AND userOrders.orderId NOT IN (SELECT oOG.orderId FROM ordersOfGroup oOG);";
         jdbcTemplate.execute(query);
     }
 
     public void delete(int orderId) {
-        String query = "DELETE FROM userOrders WHERE userOrders.orderId=" + orderId + ";";
+        String query = "DELETE FROM userOrders WHERE userOrders.orderId= " + orderId +
+                " AND userOrders.orderId NOT IN (SELECT oOG.orderId FROM ordersOfGroup oOG);";
         jdbcTemplate.execute(query);
     }
 
@@ -77,34 +87,47 @@ public class OrderDAOImpl implements OrderDAO {
     }
 
     public List<Order> get(int orderId) throws NameNotFoundException {
-        String query = "SELECT o.orderId, o.dishName, o.count from orders o\n" +
-                "Join userOrders uo on o.orderId = uo.orderId\n" +
-                "WHERE uo.orderId =" + orderId + ";";
+        String query = "SELECT o.orderId, o.dishName, o.count FROM orders o\n" +
+                "JOIN userOrders uo ON o.orderId = uo.orderId\n" +
+                "WHERE uo.orderId =  " + orderId +
+                " AND o.orderId NOT IN (SELECT oOG.orderId FROM ordersOfGroup oOG);";
         List<SimpleOrder> orders = jdbcTemplate.query(query, new OrderRowMapper());
         //return new Order();
         return generateOrderListFromUnsortedOrderList(orders);
     }
 
+    public Order getOrderOfGroup(int orderId) throws NameNotFoundException {
+        String query = "SELECT o.orderId, o.dishName, o.count FROM orders o\n" +
+                "JOIN userOrders uo ON o.orderId = uo.orderId\n" +
+                "WHERE uo.orderId =  " + orderId + ";";
+        List<SimpleOrder> orders = jdbcTemplate.query(query, new OrderRowMapper());
+        //return new Order();
+        return generateOrderListFromUnsortedOrderList(orders).get(0);
+    }
+
+
     public List<Order> getByNameAndId(String name, int orderId) throws NameNotFoundException {
         String query = "SELECT o.orderId, o.dishName, o.count from orders o\n" +
                 "Join userOrders uo on o.orderId = uo.orderId\n" +
-                "where uo.name LIKE \"" + name + "\" and uo.orderId=" + orderId + ";";
+                "WHERE uo.name LIKE \"" + name + "\" AND uo.orderId = " + orderId + " AND " +
+                "o.orderId NOT IN (SELECT oOG.orderId FROM ordersOfGroup oOG);";
         List<SimpleOrder> orders = jdbcTemplate.query(query, new OrderRowMapper());
         return generateOrderListFromUnsortedOrderList(orders);
     }
 
     public List<Order> getByUser(UserImpl user) throws NameNotFoundException {
-        String query = "SELECT o.orderId, o.dishName, o.count from orders o\n" +
-                "Join userOrders uo on o.orderId = uo.orderId\n" +
-                "WHERE uo.name LIKE\"" + user.getName() + "\";";
+        String query = "SELECT o.orderId, o.dishName, o.count FROM orders o\n" +
+                "JOIN userOrders uo ON o.orderId = uo.orderId\n" +
+                "WHERE uo.name LIKE \""+ user.getName() + "\" AND o.orderId NOT IN " +
+                "(SELECT oOG.orderId FROM ordersOfGroup oOG);";
         List<SimpleOrder> orders = jdbcTemplate.query(query, new OrderRowMapper());
         return generateOrderListFromUnsortedOrderList(orders);
     }
 
     public List<Order> list() {
-        String query = "SELECT o.orderId, o.dishName, o.count from orders o\n" +
-                "Join userOrders uo on o.orderId = uo.orderId\n" +
-                ";";
+        String query = "SELECT o.orderId, o.dishName, o.count FROM orders o\n" +
+                "JOIN userOrders uo ON o.orderId = uo.orderId\n" +
+                "WHERE uo.orderId NOT IN (SELECT ooG.orderId FROM ordersOfGroup ooG);";
         List<SimpleOrder> orders = jdbcTemplate.query(query, new OrderRowMapper());
         try {
             return generateOrderListFromUnsortedOrderList(orders);
@@ -128,7 +151,6 @@ public class OrderDAOImpl implements OrderDAO {
                     for(SimpleOrder s : simpleOrders){
                         if(so.getId().equals(s.getId())){
                             newOrder.addDish(s.getName(), s.getCount());
-
                         }
                     }
                     newOrder.setId(so.getId());
@@ -142,7 +164,8 @@ public class OrderDAOImpl implements OrderDAO {
     }
 
     private boolean exists(UserImpl user){
-        String query = "SELECT true FROM userOrders WHERE name LIKE \"" + user.getName() + "\";";
+        String query = "SELECT TRUE FROM userOrders uo WHERE uo.name LIKE \"" + user.getName() + "\"\n" +
+                "AND uo.orderId NOT IN (SELECT ooG.orderId FROM ordersOfGroup ooG);";
         boolean result = jdbcTemplate.query(query, new ResultSetExtractor<Boolean>() {
             public Boolean extractData(ResultSet resultSet) throws SQLException, DataAccessException {
                 boolean result = resultSet.next();

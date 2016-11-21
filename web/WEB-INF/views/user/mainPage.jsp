@@ -26,7 +26,7 @@
 
             $scope.updateOrders = function () {
                 refreshOrders();
-                //calcOrders();
+                calcOrders();
                 getSubmitPrice();
             };
 
@@ -71,20 +71,26 @@
                     method : 'GET',
                     url : 'http://localhost:8080/user/deleteOrder/' + id
                 }).then(function successCallback(response) {
-                    updateOrders();
+
                 }, function errorCallback(response) {
-                    updateOrders();
+                    console.log(response.statusText);
                 }).finally(function () {
-                    updatePrice();
                     refreshOrders();
+                    updatePrice();
                 });
             };
 
             function calcOrders() {
                 console.log("TEST");
+                var bebe;
                 for(var index in $scope.orders){
+                    bebe = $scope.orders[index];
                     console.log("TEST");
                     console.log($scope.orders[index] = " " + $scope.orders[index]);
+                    for(var i in bebe){
+                        //console.log($scope.orders[index][i]);
+                        console.log(bebe[i]);
+                    }
                 }
             }
 
@@ -142,23 +148,16 @@
                 <p><a href="/user/userMainPage"> <span style="color: #800000; background-color: #ffcc00;">Домой</span></a></p>
             </td>
             <td>
-                <p><a href="/user/course"> <span style="color: #800000; background-color: #ffcc00;">Сделать заказ</span></a></p>
-            </td>
-            <td>
-                <p><a href="/user/multipleCource"> <span style="color: #800000; background-color: #ffcc00;">Групповой заказ</span></a></p>
+                <p><a href="/user/groupOrder"> <span style="color: #800000; background-color: #ffcc00;">Групповой заказ</span></a></p>
             </td>
             <td>
                 <div style="margin-left: 30px;">
-                    <sec:authorize access="isAuthenticated()">
                         <p>Вы зарегистрированы под именем :<sec:authentication property="name"/> </p>
-                    </sec:authorize>
                 </div>
             </td>
             <td>
-                <sec:authorize access="isAuthenticated()">
                     <p><a class="button_logout" href="<c:url value="/logout"/> ">
                         <span style="color: #800000; background-color: #ffcc00;">Выйти</span></a> </p>
-                </sec:authorize>
             </td>
 
         </tr>

@@ -1,7 +1,8 @@
-package com.restarant.model.order;
+package com.restarant.model.repository;
 
 import com.restarant.controller.service.DishService;
 import com.restarant.model.dish.Dish;
+import com.restarant.model.order.Order;
 import com.restarant.model.user.UserImpl;
 
 import javax.naming.NameNotFoundException;
